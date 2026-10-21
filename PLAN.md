@@ -55,17 +55,17 @@ Out:
 
 ## Acceptance criteria
 
-- [ ] With the default options, each row becomes one line of JSON ending in `\n`, with no byte order mark, quotes,
+- [x] With the default options, each row becomes one line of JSON ending in `\n`, with no byte order mark, quotes,
       backslashes and line breaks escaped, and text outside ASCII written as UTF-8. (`test/format.ts`)
-- [ ] Arrays and objects are written as JSON arrays and objects, not strings. (`test/format.ts`)
-- [ ] `fields` writes only those fields, in that order, and missing ones as `null`. (`test/options.ts`)
-- [ ] Options passed to `.export()` apply to that file and override the plugin's defaults. (`test/options.ts`)
-- [ ] A plugin loaded with another `type` registers that export type with its own defaults. (`test/options.ts`)
-- [ ] Each run starts the file over. (`test/run.ts`)
-- [ ] A file that can't be opened fails the run instead of crashing the process. (`test/run.ts`)
-- [ ] `require()` returns the factory itself, `import` gets the same function, and the factory called with a `type`
+- [x] Arrays and objects are written as JSON arrays and objects, not strings. (`test/format.ts`)
+- [x] `fields` writes only those fields, in that order, and missing ones as `null`. (`test/options.ts`)
+- [x] Options passed to `.export()` apply to that file and override the plugin's defaults. (`test/options.ts`)
+- [x] A plugin loaded with another `type` registers that export type with its own defaults. (`test/options.ts`)
+- [x] Each run starts the file over. (`test/run.ts`)
+- [x] A file that can't be opened fails the run instead of crashing the process. (`test/run.ts`)
+- [x] `require()` returns the factory itself, `import` gets the same function, and the factory called with a `type`
       returns a plugin named `osmotic-plugin-jsonl:<type>` with that one export type. (`test/package.ts`)
-- [ ] `.export('jsonl', ...)` checks its options in TypeScript, for CommonJS and ES module callers, and the option types
+- [x] `.export('jsonl', ...)` checks its options in TypeScript, for CommonJS and ES module callers, and the option types
       are exported. (`test-d/`)
 
 ## Affected public API
@@ -96,6 +96,16 @@ Added:
   it.
 
 ## Verification
+
+- The tests were committed before `src/` existed and all failed then (`Cannot find module '../src/index.cjs'`, and
+  `npm test` stopped at the build with no inputs).
+- With the code, `npm test` builds, type-checks `test/` and `test-d/` (so every `@ts-expect-error` line does error) and
+  passes all 9 runtime tests, on Node.js 24 locally and on 22 and 24 in CI.
+- `npm pack --dry-run` lists `dist/`, `examples/`, `README.md` and `package.json` only.
+- The README's note that a field whose value is `undefined` is left out was checked by hand: a chain with
+  `.set({ title: 'h1', image: 'img@src' })` over `<h1>Hi</h1>` wrote `{"title":"Hi"}\n`. It describes
+  `JSON.stringify()`'s behavior rather than the plugin's, so it has no test of its own.
+- `examples/hacker-news.js` hits a real website, so it wasn't run.
 
 ## Follow-ups
 
